@@ -1,33 +1,14 @@
-# Fútbol en Vivo - Web
+# Diagnóstico HLS Android
 
-Página web responsive equivalente al proyecto Android.
+Subí este index.html temporalmente para comparar:
+1. Big Buck Bunny
+2. Dock Sud - Armenio
 
-## Archivos
-- index.html
-- streams.json
-
-## Uso
-Abrí `index.html` desde un hosting o GitHub Pages.
-
-Para cambiar partidos, editá `streams.json`.
-
-Ejemplo:
-
-```json
-{
-  "name": "Argentino de Rosario vs Defensores de Glew",
-  "competition": "Primera C",
-  "time": "15:30",
-  "url": "https://servidor.com/playlist.m3u8"
-}
-```
-
-## GitHub Pages
-1. Crear repositorio.
-2. Subir `index.html` y `streams.json`.
-3. Settings > Pages.
-4. Deploy from branch.
-5. Seleccionar `main` y `/root`.
-
-## Importante
-El navegador puede bloquear algunos streams si el servidor no permite CORS o exige autenticación, cookies, Referer u Origin específicos.
+En Android, probá ambos y enviá una captura de:
+- Estado
+- Tipo de error
+- Detalle
+- Código HTTP
+- URL afectada
+- Fatal
+- Registro técnico

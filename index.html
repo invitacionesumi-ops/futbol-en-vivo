@@ -1,517 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="theme-color" content="#07111F" />
-  <title>Fútbol en Vivo</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#07111F">
+  <title>Diagnóstico HLS</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
   <style>
-    :root{
-      --bg:#07111F;
-      --surface:#102338;
-      --surface2:#16304D;
-      --primary:#16C784;
-      --accent:#34A7FF;
-      --live:#FF3B30;
-      --text:#FFFFFF;
-      --muted:#AFC0D3;
-      --border:#24425F;
-      --black:#000000;
-    }
-
-    *{box-sizing:border-box}
-
-    html,body{
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Arial,Helvetica,sans-serif;
-      min-height:100%;
-    }
-
-    body{
-      min-height:100vh;
-    }
-
-    .app{
-      width:min(1100px,100%);
-      margin:0 auto;
-      padding:14px;
-    }
-
-    .header{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .brand-icon{
-      width:48px;
-      height:48px;
-      display:grid;
-      place-items:center;
-      border-radius:14px;
-      background:var(--primary);
-      color:#00140d;
-      font-weight:900;
-      font-size:21px;
-      flex:0 0 auto;
-    }
-
-    .brand-copy{
-      min-width:0;
-      flex:1;
-    }
-
-    .brand-copy h1{
-      margin:0;
-      font-size:clamp(22px,5vw,34px);
-      line-height:1.05;
-    }
-
-    .brand-copy p{
-      margin:5px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .live-badge{
-      background:var(--live);
-      border-radius:999px;
-      padding:7px 10px;
-      font-size:12px;
-      font-weight:800;
-      white-space:nowrap;
-    }
-
-    .player-card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:8px;
-      overflow:hidden;
-      box-shadow:0 12px 32px rgba(0,0,0,.28);
-    }
-
-    .video-wrap{
-      position:relative;
-      width:100%;
-      aspect-ratio:16/9;
-      background:#000;
-      border-radius:13px;
-      overflow:hidden;
-    }
-
-    video{
-      display:block;
-      width:100%;
-      height:100%;
-      background:#000;
-    }
-
-    .video-placeholder{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      gap:9px;
-      pointer-events:none;
-      color:var(--muted);
-      background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.48));
-    }
-
-    .video-placeholder .play-symbol{
-      width:64px;
-      height:64px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:rgba(22,199,132,.95);
-      color:#00150d;
-      font-size:28px;
-      font-weight:900;
-    }
-
-    .match-info{
-      padding:12px 10px 9px;
-    }
-
-    #currentMatch{
-      margin:0;
-      font-size:clamp(17px,4vw,22px);
-    }
-
-    #currentMeta{
-      margin:5px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    #status{
-      margin-top:8px;
-      font-size:13px;
-      color:var(--muted);
-      min-height:18px;
-    }
-
-    .actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:9px;
-      padding:0 8px 8px;
-    }
-
-    .action-btn{
-      border:0;
-      border-radius:12px;
-      padding:13px 12px;
-      font-weight:800;
-      cursor:pointer;
-      font-size:14px;
-    }
-
-    .primary-btn{
-      background:var(--primary);
-      color:#00150d;
-    }
-
-    .secondary-btn{
-      background:var(--surface2);
-      color:var(--text);
-      border:1px solid var(--border);
-    }
-
-    .section-title{
-      margin:18px 2px 10px;
-      font-size:18px;
-    }
-
-    .streams{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-    }
-
-    .stream-card{
-      width:100%;
-      border:1px solid var(--border);
-      background:var(--surface2);
-      color:var(--text);
-      border-radius:16px;
-      padding:15px;
-      text-align:left;
-      cursor:pointer;
-      transition:.18s ease;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-
-    .stream-card:hover{
-      transform:translateY(-1px);
-      border-color:var(--accent);
-    }
-
-    .stream-card.active{
-      background:var(--primary);
-      color:#00150d;
-      border-color:var(--primary);
-    }
-
-    .stream-main{
-      min-width:0;
-      flex:1;
-    }
-
-    .stream-name{
-      font-weight:800;
-      font-size:16px;
-      line-height:1.2;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .stream-meta{
-      margin-top:5px;
-      font-size:12px;
-      opacity:.78;
-    }
-
-    .stream-cta{
-      flex:0 0 auto;
-      font-size:18px;
-      font-weight:900;
-    }
-
-    .footer{
-      text-align:center;
-      color:#7890a8;
-      font-size:12px;
-      padding:22px 8px 10px;
-    }
-
-    @media (min-width:700px){
-      .app{padding:20px}
-      .streams{grid-template-columns:repeat(2,1fr)}
-      .player-card{padding:10px}
-    }
-
-    @media (min-width:980px){
-      .streams{grid-template-columns:repeat(2,1fr)}
-    }
+    :root{--bg:#07111F;--surface:#102338;--surface2:#16304D;--primary:#16C784;--danger:#FF5C5C;--warn:#FFCC66;--text:#fff;--muted:#AFC0D3;--border:#24425F}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+    .app{max-width:1000px;margin:auto;padding:14px}.header{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+    .logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--primary);color:#00150d;font-weight:900}
+    h1{margin:0;font-size:28px}.sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:10px;margin-bottom:14px}
+    .video-wrap{width:100%;aspect-ratio:16/9;background:#000;border-radius:13px;overflow:hidden}
+    video{width:100%;height:100%;background:#000}.title{font-size:20px;font-weight:800;margin:12px 4px 4px}.meta{color:var(--muted);font-size:13px;margin:0 4px 10px}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{border:0;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer}
+    .primary{background:var(--primary);color:#00150d}.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+    .streams{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0}.stream{background:var(--surface2);color:var(--text);border:1px solid var(--border);text-align:left}
+    .stream.active{background:var(--primary);color:#00150d}.stream-name{font-size:16px;font-weight:800}.stream-meta{font-size:12px;opacity:.8;margin-top:4px}
+    .row{display:grid;grid-template-columns:140px 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}.label{color:var(--muted);font-weight:700}.value{word-break:break-word}
+    .ok{color:var(--primary)}.bad{color:var(--danger)}.warn{color:var(--warn)}
+    #log{background:#050B12;border:1px solid var(--border);border-radius:12px;padding:10px;min-height:160px;max-height:320px;overflow:auto;white-space:pre-wrap;font-family:monospace;font-size:12px;color:#D7E3EE}
+    @media(min-width:700px){.streams{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
-
 <body>
-  <main class="app">
+<main class="app">
+  <div class="header"><div class="logo">▶</div><div><h1>Diagnóstico HLS</h1><p class="sub">Para detectar por qué un stream funciona en PC y falla en Android.</p></div></div>
 
-    <header class="header">
-      <div class="brand-icon">▶</div>
-
-      <div class="brand-copy">
-        <h1>Fútbol en Vivo</h1>
-        <p>Elegí un partido y mirá al instante</p>
-      </div>
-
-      <div class="live-badge">● EN VIVO</div>
-    </header>
-
-    <section class="player-card">
-      <div class="video-wrap">
-        <video id="video" controls playsinline preload="metadata"></video>
-
-        <div id="placeholder" class="video-placeholder">
-          <div class="play-symbol">▶</div>
-          <div>Elegí un partido</div>
-        </div>
-      </div>
-
-      <div class="match-info">
-        <h2 id="currentMatch">Seleccioná un partido</h2>
-        <p id="currentMeta">Hasta 10 transmisiones disponibles</p>
-        <div id="status">Esperando selección…</div>
-      </div>
-
-      <div class="actions">
-        <button id="reloadBtn" class="action-btn primary-btn">↻ Recargar</button>
-        <button id="fullscreenBtn" class="action-btn secondary-btn">⛶ Pantalla completa</button>
-      </div>
-    </section>
-
-    <h2 class="section-title">Partidos disponibles</h2>
-
-    <section id="streams" class="streams"></section>
-
-    <div class="footer">
-      Reproductor HLS responsive para Android, Chrome, tablet y PC.
+  <section class="card">
+    <div class="video-wrap"><video id="video" controls playsinline preload="metadata"></video></div>
+    <div id="currentMatch" class="title">Seleccioná un stream</div>
+    <div id="currentMeta" class="meta">Esperando prueba…</div>
+    <div class="actions">
+      <button id="reloadBtn" class="primary">↻ Reintentar</button>
+      <button id="clearBtn" class="secondary">Limpiar diagnóstico</button>
     </div>
+  </section>
 
-  </main>
+  <section id="streams" class="streams"></section>
 
-  <script>
-    /*
-      =========================================================
-      CONFIGURACIÓN
-      Podés editar directamente esta lista o usar streams.json.
-      =========================================================
-    */
+  <section class="card">
+    <h2>Diagnóstico</h2>
+    <div class="row"><div class="label">Navegador:</div><div id="browserInfo" class="value"></div></div>
+    <div class="row"><div class="label">Hls.js:</div><div id="hlsSupport" class="value"></div></div>
+    <div class="row"><div class="label">Estado:</div><div id="status" class="value">Sin iniciar</div></div>
+    <div class="row"><div class="label">Tipo de error:</div><div id="errorType" class="value">—</div></div>
+    <div class="row"><div class="label">Detalle:</div><div id="errorDetails" class="value">—</div></div>
+    <div class="row"><div class="label">Código HTTP:</div><div id="httpCode" class="value">—</div></div>
+    <div class="row"><div class="label">URL afectada:</div><div id="errorUrl" class="value">—</div></div>
+    <div class="row"><div class="label">Fatal:</div><div id="fatalValue" class="value">—</div></div>
+    <h3>Registro técnico</h3>
+    <div id="log"></div>
+  </section>
+</main>
 
-    const FALLBACK_STREAMS = [
-      {
-        name: "Dock Sud - Quilmes",
-        competition: "Mux · Demo pública",
-        time: "PRUEBA",
-        url: "https://jn304.sportvideodata.com/16243046082747529029_gZkNmYxMTNlBDZmZTLiljN50SZyQDNtYzNyQTLxQzYmRWYmRzL1JnLpBXYzRncvB3cu8WZklmd/output-0.m3u8"
-      },
-      {
-        name: "Prueba LIVE · Akamai",
-        competition: "Akamai · Demo pública",
-        time: "EN VIVO",
-        url: "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8"
-      },
-      { name: "Partido 3", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 4", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 5", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 6", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 7", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 8", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 9", competition: "Configurar", time: "", url: "" },
-      { name: "Partido 10", competition: "Configurar", time: "", url: "" }
-    ];
+<script>
+const STREAMS=[
+  {name:"Prueba HLS · Big Buck Bunny",competition:"Mux · Demo pública",time:"PRUEBA",url:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"},
+  {name:"Dock Sud - Armenio",competition:"LIVE",time:"EN VIVO",url:"https://jn304.sportvideodata.com/16243046082747529029_gZkNmYxMTNlBDZmZTLiljN50SZyQDNtYzNyQTLxQzYmRWYmRzL1JnLpBXYzRncvB3cu8WZklmd/output-0.m3u8"}
+];
 
-    const CONFIG_FILE = "./streams.json";
+const video=document.getElementById("video"), streamsEl=document.getElementById("streams"), currentMatch=document.getElementById("currentMatch"), currentMeta=document.getElementById("currentMeta");
+const browserInfo=document.getElementById("browserInfo"), hlsSupport=document.getElementById("hlsSupport"), statusEl=document.getElementById("status"), errorType=document.getElementById("errorType"), errorDetails=document.getElementById("errorDetails"), httpCode=document.getElementById("httpCode"), errorUrl=document.getElementById("errorUrl"), fatalValue=document.getElementById("fatalValue"), logEl=document.getElementById("log");
+const reloadBtn=document.getElementById("reloadBtn"), clearBtn=document.getElementById("clearBtn");
+let hls=null,currentIndex=null;
 
-    const video = document.getElementById("video");
-    const placeholder = document.getElementById("placeholder");
-    const currentMatch = document.getElementById("currentMatch");
-    const currentMeta = document.getElementById("currentMeta");
-    const statusEl = document.getElementById("status");
-    const streamsEl = document.getElementById("streams");
-    const reloadBtn = document.getElementById("reloadBtn");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
+browserInfo.textContent=navigator.userAgent;
+hlsSupport.textContent=Hls.isSupported()?"Sí · Media Source disponible":"No";
+hlsSupport.className="value "+(Hls.isSupported()?"ok":"bad");
 
-    let streams = [];
-    let hls = null;
-    let currentIndex = null;
+function log(msg,obj){
+  const now=new Date().toLocaleTimeString();
+  let line=`[${now}] ${msg}`;
+  if(obj){try{line+="\n"+JSON.stringify(obj,null,2)}catch(e){line+="\n"+String(obj)}}
+  logEl.textContent+=line+"\n\n"; logEl.scrollTop=logEl.scrollHeight;
+}
+function resetDiag(){statusEl.textContent="Sin iniciar";statusEl.className="value";errorType.textContent="—";errorDetails.textContent="—";httpCode.textContent="—";errorUrl.textContent="—";fatalValue.textContent="—";}
+function setActive(index){document.querySelectorAll(".stream").forEach((el,i)=>el.classList.toggle("active",i===index));}
+function destroyPlayer(){if(hls){hls.destroy();hls=null} video.pause();video.removeAttribute("src");video.load();}
+function showError(data){
+  errorType.textContent=data.type||"—";errorDetails.textContent=data.details||"—";fatalValue.textContent=String(!!data.fatal);
+  const r=data.response||{},n=data.networkDetails||{};
+  httpCode.textContent=r.code||r.status||n.status||n.statusCode||"—";
+  errorUrl.textContent=data.url||r.url||n.responseURL||n.url||"—";
+}
+function playStream(index){
+  const item=STREAMS[index]; if(!item)return;
+  currentIndex=index;setActive(index);resetDiag();destroyPlayer();
+  currentMatch.textContent=item.name;currentMeta.textContent=[item.competition,item.time].filter(Boolean).join(" • ");
+  statusEl.textContent="Cargando manifiesto…";statusEl.className="value warn";
+  log("Iniciando stream: "+item.name);log("URL: "+item.url);
 
-    async function loadConfig(){
-      try{
-        const res = await fetch(CONFIG_FILE, { cache: "no-store" });
+  if(Hls.isSupported()){
+    hls=new Hls({enableWorker:true,lowLatencyMode:false,backBufferLength:20,maxBufferLength:30,maxMaxBufferLength:60,fragLoadingTimeOut:20000,manifestLoadingTimeOut:20000,levelLoadingTimeOut:20000});
+    hls.loadSource(item.url);hls.attachMedia(video);
 
-        if(!res.ok) throw new Error("No config");
+    hls.on(Hls.Events.MEDIA_ATTACHED,()=>log("MEDIA_ATTACHED"));
+    hls.on(Hls.Events.MANIFEST_LOADING,(e,d)=>log("MANIFEST_LOADING",{url:d.url}));
+    hls.on(Hls.Events.MANIFEST_LOADED,(e,d)=>{statusEl.textContent="Manifiesto cargado";statusEl.className="value ok";log("MANIFEST_LOADED",{url:d.url,levels:d.levels?d.levels.length:undefined})});
+    hls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{statusEl.textContent="Manifest parseado · iniciando reproducción";statusEl.className="value ok";log("MANIFEST_PARSED",{levels:d.levels?d.levels.length:undefined,audioTracks:d.audioTracks?d.audioTracks.length:undefined});video.play().catch(err=>log("video.play() rechazado",{name:err.name,message:err.message}))});
+    hls.on(Hls.Events.LEVEL_LOADED,(e,d)=>log("LEVEL_LOADED",{live:d.details?d.details.live:undefined,totalduration:d.details?d.details.totalduration:undefined}));
+    hls.on(Hls.Events.FRAG_LOADING,(e,d)=>log("FRAG_LOADING",{url:d.frag?d.frag.url:undefined,sn:d.frag?d.frag.sn:undefined}));
+    hls.on(Hls.Events.FRAG_LOADED,(e,d)=>log("FRAG_LOADED",{url:d.frag?d.frag.url:undefined,sn:d.frag?d.frag.sn:undefined}));
 
-        const data = await res.json();
-
-        if(Array.isArray(data) && data.length){
-          streams = data.slice(0,10);
-        }else{
-          streams = FALLBACK_STREAMS;
-        }
-      }catch(e){
-        streams = FALLBACK_STREAMS;
-      }
-
-      renderStreams();
-    }
-
-    function renderStreams(){
-      streamsEl.innerHTML = "";
-
-      streams.forEach((item,index)=>{
-        const btn = document.createElement("button");
-        btn.className = "stream-card";
-        btn.type = "button";
-
-        const meta = [item.competition,item.time].filter(Boolean).join(" • ");
-
-        btn.innerHTML = `
-          <div class="stream-main">
-            <div class="stream-name">${escapeHtml(item.name || ("Stream " + (index+1)))}</div>
-            <div class="stream-meta">${escapeHtml(meta || "Disponible")}</div>
-          </div>
-          <div class="stream-cta">▶</div>
-        `;
-
-        btn.addEventListener("click",()=>playStream(index));
-        streamsEl.appendChild(btn);
-      });
-    }
-
-    function escapeHtml(value){
-      return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function destroyPlayer(){
-      if(hls){
-        hls.destroy();
-        hls = null;
-      }
-
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-    }
-
-    function setActive(index){
-      document.querySelectorAll(".stream-card").forEach((el,i)=>{
-        el.classList.toggle("active", i===index);
-      });
-    }
-
-    function playStream(index){
-      const item = streams[index];
-
-      if(!item || !item.url){
-        statusEl.textContent = "Este partido todavía no tiene una URL configurada.";
-        return;
-      }
-
-      currentIndex = index;
-      setActive(index);
-
-      currentMatch.textContent = item.name || ("Stream " + (index+1));
-      currentMeta.textContent =
-        [item.competition,item.time].filter(Boolean).join(" • ") || "Transmisión HLS";
-
-      statusEl.textContent = "Cargando transmisión…";
-      placeholder.style.display = "none";
-
-      destroyPlayer();
-
-      if(Hls.isSupported()){
-        hls = new Hls({
-          enableWorker:true,
-          lowLatencyMode:true,
-          backBufferLength:30
-        });
-
-        hls.loadSource(item.url);
-        hls.attachMedia(video);
-
-        hls.on(Hls.Events.MANIFEST_PARSED,()=>{
-          statusEl.textContent = "Transmisión lista. Tocá Play si no inicia automáticamente.";
-          video.play().catch(()=>{});
-        });
-
-        hls.on(Hls.Events.ERROR,(event,data)=>{
-          console.error("HLS error:",data);
-
-          if(data.fatal){
-            statusEl.textContent =
-              "No se pudo cargar el stream. Revisá la URL o las restricciones del servidor.";
-          }
-        });
-
-      }else if(video.canPlayType("application/vnd.apple.mpegurl")){
-        video.src = item.url;
-
-        video.addEventListener("loadedmetadata",()=>{
-          statusEl.textContent = "Transmisión lista.";
-          video.play().catch(()=>{});
-        },{once:true});
-
-      }else{
-        statusEl.textContent = "Este navegador no soporta reproducción HLS.";
-      }
-    }
-
-    reloadBtn.addEventListener("click",()=>{
-      if(currentIndex === null){
-        statusEl.textContent = "Primero elegí un partido.";
-        return;
-      }
-
-      playStream(currentIndex);
-    });
-
-    fullscreenBtn.addEventListener("click",async()=>{
-      const target = document.querySelector(".video-wrap");
-
-      try{
-        if(!document.fullscreenElement){
-          await target.requestFullscreen();
-        }else{
-          await document.exitFullscreen();
-        }
-      }catch(e){
-        statusEl.textContent = "No se pudo activar pantalla completa.";
+    hls.on(Hls.Events.ERROR,(e,data)=>{
+      showError(data);
+      log("HLS ERROR",{type:data.type,details:data.details,fatal:data.fatal,url:data.url,response:data.response?{code:data.response.code,text:data.response.text,url:data.response.url}:undefined});
+      statusEl.textContent=`Error: ${data.type||"desconocido"} / ${data.details||"sin detalle"}`;statusEl.className="value bad";
+      if(data.fatal){
+        if(data.type===Hls.ErrorTypes.NETWORK_ERROR){log("Error de red fatal. Intentando hls.startLoad()");setTimeout(()=>{try{hls.startLoad()}catch(err){log("Falló startLoad()",{name:err.name,message:err.message})}},1200);}
+        else if(data.type===Hls.ErrorTypes.MEDIA_ERROR){log("Error de media fatal. Intentando recoverMediaError()");setTimeout(()=>{try{hls.recoverMediaError()}catch(err){log("Falló recoverMediaError()",{name:err.name,message:err.message})}},1200);}
+        else{log("Error fatal no recuperable automáticamente");}
       }
     });
 
-    loadConfig();
-  </script>
+  } else if(video.canPlayType("application/vnd.apple.mpegurl")){
+    log("Usando HLS nativo del navegador");video.src=item.url;
+    video.addEventListener("loadedmetadata",()=>{statusEl.textContent="Metadata cargada por HLS nativo";statusEl.className="value ok";video.play().catch(()=>{})},{once:true});
+    video.addEventListener("error",()=>{const err=video.error;statusEl.textContent="Error de video nativo";statusEl.className="value bad";log("VIDEO ERROR NATIVO",{code:err?err.code:undefined,message:err?err.message:undefined})},{once:true});
+  } else {statusEl.textContent="El navegador no soporta HLS";statusEl.className="value bad";}
+}
+
+STREAMS.forEach((item,index)=>{
+  const btn=document.createElement("button");btn.className="stream";btn.type="button";
+  btn.innerHTML=`<div class="stream-name">${item.name}</div><div class="stream-meta">${item.competition} • ${item.time}</div>`;
+  btn.addEventListener("click",()=>playStream(index));streamsEl.appendChild(btn);
+});
+reloadBtn.addEventListener("click",()=>{if(currentIndex===null){statusEl.textContent="Elegí primero un stream";return}playStream(currentIndex)});
+clearBtn.addEventListener("click",()=>{logEl.textContent="";resetDiag()});
+</script>
 </body>
 </html>
