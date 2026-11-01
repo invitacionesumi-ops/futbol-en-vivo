@@ -5,12 +5,12 @@
     "time": "PRUEBA",
     "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
   },
-  {
-    "name": "Dock Sud	Dock Sud -Argentino de Merlo",
-    "competition": "LIVE",
-    "time": "EN VIVO",
-    "url": "https://jn304.sportvideodata.com/16243046082747529029_gZkNmYxMTNlBDZmZTLiljN50SZyQDNtYzNyQTLxQzYmRWYmRzL1JnLpBXYzRncvB3cu8WZklmd/output-0.m3u8"
-  },
+{
+  "name": "Dock Sud - Armenio",
+  "competition": "LIVE",
+  "time": "EN VIVO",
+  "url": "https://jn304.sportvideodata.com/16243046082747529029_gZkNmYxMTNlBDZmZTLiljN50SZyQDNtYzNyQTLxQzYmRWYmRzL1JnLpBXYzRncvB3cu8WZklmd/output-0.m3u8"
+},
   {
     "name": "Partido 3",
     "competition": "Configurar",
