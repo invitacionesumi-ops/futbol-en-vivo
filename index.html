@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="theme-color" content="#07111F">
-  <title>Diagnóstico HLS</title>
+  <title>DiagnÃ³stico HLS</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     :root{--bg:#07111F;--surface:#102338;--surface2:#16304D;--primary:#16C784;--danger:#FF5C5C;--warn:#FFCC66;--text:#fff;--muted:#AFC0D3;--border:#24425F}
@@ -27,38 +27,38 @@
 </head>
 <body>
 <main class="app">
-  <div class="header"><div class="logo">▶</div><div><h1>Diagnóstico HLS</h1><p class="sub">Para detectar por qué un stream funciona en PC y falla en Android.</p></div></div>
+  <div class="header"><div class="logo">â–¶</div><div><h1>DiagnÃ³stico HLS</h1><p class="sub">Para detectar por quÃ© un stream funciona en PC y falla en Android.</p></div></div>
 
   <section class="card">
     <div class="video-wrap"><video id="video" controls playsinline preload="metadata"></video></div>
-    <div id="currentMatch" class="title">Seleccioná un stream</div>
-    <div id="currentMeta" class="meta">Esperando prueba…</div>
+    <div id="currentMatch" class="title">SeleccionÃ¡ un stream</div>
+    <div id="currentMeta" class="meta">Esperando pruebaâ€¦</div>
     <div class="actions">
-      <button id="reloadBtn" class="primary">↻ Reintentar</button>
-      <button id="clearBtn" class="secondary">Limpiar diagnóstico</button>
+      <button id="reloadBtn" class="primary">â†» Reintentar</button>
+      <button id="clearBtn" class="secondary">Limpiar diagnÃ³stico</button>
     </div>
   </section>
 
   <section id="streams" class="streams"></section>
 
   <section class="card">
-    <h2>Diagnóstico</h2>
+    <h2>DiagnÃ³stico</h2>
     <div class="row"><div class="label">Navegador:</div><div id="browserInfo" class="value"></div></div>
     <div class="row"><div class="label">Hls.js:</div><div id="hlsSupport" class="value"></div></div>
     <div class="row"><div class="label">Estado:</div><div id="status" class="value">Sin iniciar</div></div>
-    <div class="row"><div class="label">Tipo de error:</div><div id="errorType" class="value">—</div></div>
-    <div class="row"><div class="label">Detalle:</div><div id="errorDetails" class="value">—</div></div>
-    <div class="row"><div class="label">Código HTTP:</div><div id="httpCode" class="value">—</div></div>
-    <div class="row"><div class="label">URL afectada:</div><div id="errorUrl" class="value">—</div></div>
-    <div class="row"><div class="label">Fatal:</div><div id="fatalValue" class="value">—</div></div>
-    <h3>Registro técnico</h3>
+    <div class="row"><div class="label">Tipo de error:</div><div id="errorType" class="value">â€”</div></div>
+    <div class="row"><div class="label">Detalle:</div><div id="errorDetails" class="value">â€”</div></div>
+    <div class="row"><div class="label">CÃ³digo HTTP:</div><div id="httpCode" class="value">â€”</div></div>
+    <div class="row"><div class="label">URL afectada:</div><div id="errorUrl" class="value">â€”</div></div>
+    <div class="row"><div class="label">Fatal:</div><div id="fatalValue" class="value">â€”</div></div>
+    <h3>Registro tÃ©cnico</h3>
     <div id="log"></div>
   </section>
 </main>
 
 <script>
 const STREAMS=[
-  {name:"Prueba HLS · Big Buck Bunny",competition:"Mux · Demo pública",time:"PRUEBA",url:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"},
+  {name:"Prueba HLS Â· Big Buck Bunny",competition:"Mux Â· Demo pÃºblica",time:"PRUEBA",url:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"},
   {name:"Dock Sud - Armenio",competition:"LIVE",time:"EN VIVO",url:"https://jn304.sportvideodata.com/16243046082747529029_gZkNmYxMTNlBDZmZTLiljN50SZyQDNtYzNyQTLxQzYmRWYmRzL1JnLpBXYzRncvB3cu8WZklmd/output-0.m3u8"}
 ];
 
@@ -68,7 +68,7 @@ const reloadBtn=document.getElementById("reloadBtn"), clearBtn=document.getEleme
 let hls=null,currentIndex=null;
 
 browserInfo.textContent=navigator.userAgent;
-hlsSupport.textContent=Hls.isSupported()?"Sí · Media Source disponible":"No";
+hlsSupport.textContent=Hls.isSupported()?"SÃ­ Â· Media Source disponible":"No";
 hlsSupport.className="value "+(Hls.isSupported()?"ok":"bad");
 
 function log(msg,obj){
@@ -77,20 +77,20 @@ function log(msg,obj){
   if(obj){try{line+="\n"+JSON.stringify(obj,null,2)}catch(e){line+="\n"+String(obj)}}
   logEl.textContent+=line+"\n\n"; logEl.scrollTop=logEl.scrollHeight;
 }
-function resetDiag(){statusEl.textContent="Sin iniciar";statusEl.className="value";errorType.textContent="—";errorDetails.textContent="—";httpCode.textContent="—";errorUrl.textContent="—";fatalValue.textContent="—";}
+function resetDiag(){statusEl.textContent="Sin iniciar";statusEl.className="value";errorType.textContent="â€”";errorDetails.textContent="â€”";httpCode.textContent="â€”";errorUrl.textContent="â€”";fatalValue.textContent="â€”";}
 function setActive(index){document.querySelectorAll(".stream").forEach((el,i)=>el.classList.toggle("active",i===index));}
 function destroyPlayer(){if(hls){hls.destroy();hls=null} video.pause();video.removeAttribute("src");video.load();}
 function showError(data){
-  errorType.textContent=data.type||"—";errorDetails.textContent=data.details||"—";fatalValue.textContent=String(!!data.fatal);
+  errorType.textContent=data.type||"â€”";errorDetails.textContent=data.details||"â€”";fatalValue.textContent=String(!!data.fatal);
   const r=data.response||{},n=data.networkDetails||{};
-  httpCode.textContent=r.code||r.status||n.status||n.statusCode||"—";
-  errorUrl.textContent=data.url||r.url||n.responseURL||n.url||"—";
+  httpCode.textContent=r.code||r.status||n.status||n.statusCode||"â€”";
+  errorUrl.textContent=data.url||r.url||n.responseURL||n.url||"â€”";
 }
 function playStream(index){
   const item=STREAMS[index]; if(!item)return;
   currentIndex=index;setActive(index);resetDiag();destroyPlayer();
-  currentMatch.textContent=item.name;currentMeta.textContent=[item.competition,item.time].filter(Boolean).join(" • ");
-  statusEl.textContent="Cargando manifiesto…";statusEl.className="value warn";
+  currentMatch.textContent=item.name;currentMeta.textContent=[item.competition,item.time].filter(Boolean).join(" â€¢ ");
+  statusEl.textContent="Cargando manifiestoâ€¦";statusEl.className="value warn";
   log("Iniciando stream: "+item.name);log("URL: "+item.url);
 
   if(Hls.isSupported()){
@@ -100,7 +100,7 @@ function playStream(index){
     hls.on(Hls.Events.MEDIA_ATTACHED,()=>log("MEDIA_ATTACHED"));
     hls.on(Hls.Events.MANIFEST_LOADING,(e,d)=>log("MANIFEST_LOADING",{url:d.url}));
     hls.on(Hls.Events.MANIFEST_LOADED,(e,d)=>{statusEl.textContent="Manifiesto cargado";statusEl.className="value ok";log("MANIFEST_LOADED",{url:d.url,levels:d.levels?d.levels.length:undefined})});
-    hls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{statusEl.textContent="Manifest parseado · iniciando reproducción";statusEl.className="value ok";log("MANIFEST_PARSED",{levels:d.levels?d.levels.length:undefined,audioTracks:d.audioTracks?d.audioTracks.length:undefined});video.play().catch(err=>log("video.play() rechazado",{name:err.name,message:err.message}))});
+    hls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{statusEl.textContent="Manifest parseado Â· iniciando reproducciÃ³n";statusEl.className="value ok";log("MANIFEST_PARSED",{levels:d.levels?d.levels.length:undefined,audioTracks:d.audioTracks?d.audioTracks.length:undefined});video.play().catch(err=>log("video.play() rechazado",{name:err.name,message:err.message}))});
     hls.on(Hls.Events.LEVEL_LOADED,(e,d)=>log("LEVEL_LOADED",{live:d.details?d.details.live:undefined,totalduration:d.details?d.details.totalduration:undefined}));
     hls.on(Hls.Events.FRAG_LOADING,(e,d)=>log("FRAG_LOADING",{url:d.frag?d.frag.url:undefined,sn:d.frag?d.frag.sn:undefined}));
     hls.on(Hls.Events.FRAG_LOADED,(e,d)=>log("FRAG_LOADED",{url:d.frag?d.frag.url:undefined,sn:d.frag?d.frag.sn:undefined}));
@@ -110,9 +110,9 @@ function playStream(index){
       log("HLS ERROR",{type:data.type,details:data.details,fatal:data.fatal,url:data.url,response:data.response?{code:data.response.code,text:data.response.text,url:data.response.url}:undefined});
       statusEl.textContent=`Error: ${data.type||"desconocido"} / ${data.details||"sin detalle"}`;statusEl.className="value bad";
       if(data.fatal){
-        if(data.type===Hls.ErrorTypes.NETWORK_ERROR){log("Error de red fatal. Intentando hls.startLoad()");setTimeout(()=>{try{hls.startLoad()}catch(err){log("Falló startLoad()",{name:err.name,message:err.message})}},1200);}
-        else if(data.type===Hls.ErrorTypes.MEDIA_ERROR){log("Error de media fatal. Intentando recoverMediaError()");setTimeout(()=>{try{hls.recoverMediaError()}catch(err){log("Falló recoverMediaError()",{name:err.name,message:err.message})}},1200);}
-        else{log("Error fatal no recuperable automáticamente");}
+        if(data.type===Hls.ErrorTypes.NETWORK_ERROR){log("Error de red fatal. Intentando hls.startLoad()");setTimeout(()=>{try{hls.startLoad()}catch(err){log("FallÃ³ startLoad()",{name:err.name,message:err.message})}},1200);}
+        else if(data.type===Hls.ErrorTypes.MEDIA_ERROR){log("Error de media fatal. Intentando recoverMediaError()");setTimeout(()=>{try{hls.recoverMediaError()}catch(err){log("FallÃ³ recoverMediaError()",{name:err.name,message:err.message})}},1200);}
+        else{log("Error fatal no recuperable automÃ¡ticamente");}
       }
     });
 
@@ -125,10 +125,10 @@ function playStream(index){
 
 STREAMS.forEach((item,index)=>{
   const btn=document.createElement("button");btn.className="stream";btn.type="button";
-  btn.innerHTML=`<div class="stream-name">${item.name}</div><div class="stream-meta">${item.competition} • ${item.time}</div>`;
+  btn.innerHTML=`<div class="stream-name">${item.name}</div><div class="stream-meta">${item.competition} â€¢ ${item.time}</div>`;
   btn.addEventListener("click",()=>playStream(index));streamsEl.appendChild(btn);
 });
-reloadBtn.addEventListener("click",()=>{if(currentIndex===null){statusEl.textContent="Elegí primero un stream";return}playStream(currentIndex)});
+reloadBtn.addEventListener("click",()=>{if(currentIndex===null){statusEl.textContent="ElegÃ­ primero un stream";return}playStream(currentIndex)});
 clearBtn.addEventListener("click",()=>{logEl.textContent="";resetDiag()});
 </script>
 </body>
